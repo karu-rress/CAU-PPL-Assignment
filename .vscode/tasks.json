@@ -1,0 +1,36 @@
+{
+    "tasks": [
+        {
+            "type": "cppbuild",
+            "label": "build C++ file",
+            "command": "C:\\msys64\\ucrt64\\bin\\g++.exe",
+            "args": [
+                "-fdiagnostics-color=always",
+                "-Wall",
+                "-Wextra",
+                "-fstack-protector",
+                "-std=c++23",
+                "-g3",
+                "-ID:/Programming/include/boost_1_82_0",
+                "-LD:/Programming/include/boost_1_82_0/stage/lib",
+                "${fileBasename}",
+                "-lgdi32",
+                "-lws2_32",
+                "-lwsock32",
+                "-o",
+                "${fileBasenameNoExtension}.exe"
+            ],
+            
+            "options": {
+                "cwd": "${fileDirname}"
+            },
+            "problemMatcher": [
+                "$gcc"
+            ],
+            "group": {
+                "kind": "build",
+            },
+        }
+    ],
+    "version": "2.0.0"
+}
