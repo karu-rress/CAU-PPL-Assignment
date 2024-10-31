@@ -1,4 +1,15 @@
-#include "enums.h"
+/**
+ * 
+ * enums.cpp
+ * 
+ * This file contains the overloaded operators
+ * for the enums used in the lexer and parser.
+ * 
+ */
+
+#include <utility>
+
+#include "../include/enums.h"
 
 std::ostream &operator<<(std::ostream &os, const CharClass &char_class) {
     switch (char_class) {
@@ -16,7 +27,6 @@ std::ostream &operator<<(std::ostream &os, const CharClass &char_class) {
         break;
     [[unlikely]] default:
         std::unreachable();
-        break;
     }
     return os;
 }
@@ -55,7 +65,6 @@ std::ostream &operator<<(std::ostream &os, const Token &token) {
         break;
     [[unlikely]] default:
         std::unreachable();
-        break;
     }
     return os;
 }

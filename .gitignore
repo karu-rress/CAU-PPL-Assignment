@@ -1,0 +1,7 @@
+main.exe
+main
+
+build/
+
+*.pdf
+*.hwp

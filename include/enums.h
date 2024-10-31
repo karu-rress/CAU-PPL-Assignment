@@ -1,7 +1,16 @@
+/**
+ * 
+ * enums.h
+ * 
+ * This file contains the declaration of the enums
+ * used in the lexer and parser.
+ * 
+ */
+
 #ifndef __ENUMS_H__
 #define __ENUMS_H__
 
-#include <iostream>
+#include <ostream>
 
 // Character classes
 enum class CharClass : int {
@@ -13,18 +22,18 @@ enum class CharClass : int {
 
 // Token types
 enum class Token : int {
-    CONST,
-    IDENT,
-    ASSIGN_OP,
-    SEMICOLON,
-    ADD_OP,
-    SUB_OP,
-    MULT_OP,
-    DIV_OP,
-    LEFT_PAREN,
-    RIGHT_PAREN,
-    UNKNOWN,
-    END,
+    CONST = 10,
+    IDENT = 11,
+    ASSIGN_OP = 21,
+    SEMICOLON = 22,
+    ADD_OP = 31,
+    SUB_OP = 32,
+    MULT_OP = 41,
+    DIV_OP = 42,
+    LEFT_PAREN = 51,
+    RIGHT_PAREN = 52,
+    UNKNOWN = 99,
+    END = -1,
 };
 
 // Overloaded operators for enums
