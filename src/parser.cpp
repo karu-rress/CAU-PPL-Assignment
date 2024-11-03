@@ -6,6 +6,8 @@
  *
  */
 
+#include <algorithm>
+#include <format>
 #include <fstream>
 #include <iostream>
 
@@ -39,14 +41,12 @@ void parser::parse() {
     // Program ends
 
     cout << "Result ==> ";
-    for (auto &[var, value] : symbol_table) {
-        cout << var << ": ";
-        if (value)
-            cout << *value;
+    ranges::for_each(symbol_table, [](auto &&symbol) {
+        if (cout << symbol.first << ": "; symbol.second)
+            cout << *symbol.second << "; ";
         else
-            cout << "Unknown";
-        cout << "; ";
-    }
+            cout << "Unknown; ";
+    });
     cout << endl;
 }
 
@@ -61,7 +61,7 @@ void parser::statements() {
 
     // Statement ends
     cout << current_statement.str() << endl;
-    cout << "ID: " << ids << "; CONST: " << consts << "; OP: " << ops << ";" << endl;
+    cout << format("ID: {}; CONST: {}; OP: {};", ids, consts, ops) << endl;
     cout << (error_message.empty() ? "(OK)" : error_message) << endl;
 
     ids = consts = ops = 0;
@@ -80,6 +80,9 @@ void parser::statements() {
 void parser::statement() {
     string &&id = ident(true); // Adding identifier to symbol table
 
+    if (lex.get_next_token() == Token::ASSIGN_OP_INCOMPLETE) {
+        error_message = "(Warning) Use of '=' instead of ':='.";
+    }
     take_next_token(); // assign_operator()
 
     symbol_table[id] = expression();
@@ -92,6 +95,11 @@ optional<data_t> parser::expression() {
     Token t = lex.get_next_token(); // operator
 
     optional<data_t> term2 = term_tail();
+    
+    if (t == Token::UNKNOWN) {
+        error_message = "(Error) Unknown operator.";
+        return nullopt;
+    }
 
     if (!term1)
         return nullopt;
@@ -104,7 +112,7 @@ optional<data_t> parser::expression() {
 
 // <term_tail> → <add_op><term><term_tail> | ε
 optional<data_t> parser::term_tail() {
-    if (lex.get_next_token() == Token::ADD_OP || lex.get_next_token() == Token::SUB_OP) {
+    if (auto token = lex.get_next_token(); token == Token::ADD_OP || token == Token::SUB_OP) {
         ops++;
         take_next_token(); // operator
 
@@ -119,6 +127,36 @@ optional<data_t> parser::term_tail() {
             return term1;
 
         return (t == Token::ADD_OP) ? *term1 + *term2 : *term1 - *term2;
+    }
+    else if (token == Token::MULT_OP || token == Token::DIV_OP) {
+        error_message = "(Warning) Ignoring extra operator '" + lex.get_token_string() + "'.";
+
+        ops++;
+
+        take_next_token();
+        return term_tail();
+    }
+    else if (token == Token::IDENT || token == Token::CONST) {
+        error_message = "(Warning) Missing operator. Ignoring extra term.";
+
+        if (token == Token::IDENT)
+            ids++;
+        else
+            consts++;
+
+        take_next_token();
+        return term_tail();
+    }
+    else if (token == Token::ASSIGN_OP) {
+        error_message = "(Error) Missing ';' between two statements.";
+
+        take_next_token();
+        return expression();
+    }
+    else if (token == Token::UNKNOWN) {
+        take_next_token();
+        term_tail();
+        return nullopt;
     }
     else
         return nullopt;
@@ -157,6 +195,11 @@ optional<data_t> parser::factor_tail() {
         if (!factor2)
             return factor1;
 
+        if (t == Token::DIV_OP && *factor2 == 0) {
+            error_message = "(Warning) Division by zero. Ignoring operation.";
+            return factor1;
+        }
+
         return (t == Token::MULT_OP) ? *factor1 * *factor2 : *factor1 / *factor2;
     }
     else
@@ -173,8 +216,8 @@ optional<data_t> parser::factor() {
             return ret;
         }
         else {
-            error_message = "(ERROR) expected a ')'.'";
-            return nullopt;
+            error_message = "(Warning) Missing ')'. Assuming ')' at the end.";
+            return ret;
         }
     }
     else if (token == Token::IDENT) {
@@ -190,13 +233,15 @@ optional<data_t> parser::factor() {
     else {
         if (token == Token::ADD_OP || token == Token::SUB_OP
             || token == Token::MULT_OP || token == Token::DIV_OP) {
-            error_message = "(WARNING) Ignoring extra operator '" + lex.get_token_string() + "'.";
+            error_message = format("(Warning) Ignoring extra operator '{}'.", lex.get_token_string());
+
+            ops++;
 
             take_next_token();
             return factor();
         }
         else {
-            error_message = "(ERROR) expected a '(', an identifier, or a constant";
+            error_message = "(Error) expected a '(', an identifier, or a constant.";
             return nullopt;
         }
     }
@@ -215,7 +260,7 @@ string parser::ident(bool add) {
             symbol_table[id] = 0.0;
         }
         else {
-            error_message = "(Error) Undefined identifier: '" + id + "'.";
+            error_message = format("(Error) Undefined identifier: '{}'.", id);
             symbol_table[id] = nullopt;
         }
     }

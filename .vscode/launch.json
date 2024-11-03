@@ -30,7 +30,7 @@
             "preLaunchTask": "build C++ file",
             "cwd": "${fileDirname}",
             "program": "${fileDirname}\\main.exe",
-            "args": ["input/normal1.t"],
+            "args": ["input/error6.t"],
             "environment": [],
             "stopAtEntry": false,
             "externalConsole": true,

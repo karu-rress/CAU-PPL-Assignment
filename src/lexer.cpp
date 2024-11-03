@@ -11,6 +11,8 @@
 
 #include "../include/lexer.h"
 
+
+#include <iostream>
 ////////////// PUBLIC //////////////
 
 void lexer::lexical() {
@@ -77,6 +79,7 @@ void lexer::get_char() {
 
 void lexer::lookup(char ch) {
     static const std::map<char, Token> lookup_table = {
+        { '=', Token::ASSIGN_OP_INCOMPLETE },
         { '+', Token::ADD_OP },
         { '-', Token::SUB_OP },
         { '*', Token::MULT_OP },
@@ -102,7 +105,11 @@ void lexer::lookup(char ch) {
             next_token = Token::UNKNOWN;
     }
     else {
-        add_char();
-        next_token = Token::END;
+        if (next_char != '\0') {
+            add_char();
+            next_token = Token::UNKNOWN;
+        }
+        else
+            next_token = Token::END;
     }
 }

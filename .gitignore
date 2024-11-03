@@ -5,3 +5,7 @@ build/
 
 *.pdf
 *.hwp
+
+2023*/
+
+*.zip

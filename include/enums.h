@@ -1,10 +1,10 @@
 /**
- * 
+ *
  * enums.h
- * 
+ *
  * This file contains the declaration of the enums
  * used in the lexer and parser.
- * 
+ *
  */
 
 #ifndef __ENUMS_H__
@@ -25,6 +25,7 @@ enum class Token : int {
     CONST,
     IDENT,
     ASSIGN_OP,
+    ASSIGN_OP_INCOMPLETE,
     SEMICOLON,
     ADD_OP,
     SUB_OP,

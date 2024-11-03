@@ -1,7 +1,7 @@
 # Makefile
 
 CC = g++
-CXXFLAGS = -std=c++20 -Wall -Wextra -g3
+CXXFLAGS = -std=c++20 -Wall -Wextra
 
 
 SRC_DIR = src
