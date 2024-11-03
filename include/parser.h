@@ -1,3 +1,11 @@
+/**
+ * 
+ * parser.h
+ * 
+ * This file contains the declaration of the parser class.
+ * 
+ */
+
 #ifndef __PARSER_H__
 #define __PARSER_H__
 

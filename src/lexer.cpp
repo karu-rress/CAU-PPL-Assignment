@@ -1,11 +1,12 @@
 /**
- * 
+ *
  * lexer.cpp
- * 
+ *
  * This file contains the implementation of the lexer class.
- * 
+ *
  */
 
+#include <map>
 #include <utility>
 
 #include "../include/lexer.h"
@@ -48,69 +49,11 @@ void lexer::lexical() {
         break;
 
     [[unlikely]] default:
-        std::unreachable();
         break;
     }
 }
 
 ////////////// PRIVATE //////////////
-
-void lexer::lookup(char ch) {
-    switch (ch) {
-    case '+':
-        add_char();
-        next_token = Token::ADD_OP;
-        break;
-
-    case '-':
-        add_char();
-        next_token = Token::SUB_OP;
-        break;
-
-    case '*':
-        add_char();
-        next_token = Token::MULT_OP;
-        break;
-
-    case '/':
-        add_char();
-        next_token = Token::DIV_OP;
-        break;
-
-    case '(':
-        add_char();
-        next_token = Token::LEFT_PAREN;
-        break;
-
-    case ')':
-        add_char();
-        next_token = Token::RIGHT_PAREN;
-        break;
-
-    case ':':
-        add_char();
-        get_char();
-
-        if (next_char == '=') {
-            add_char();
-            next_token = Token::ASSIGN_OP;
-        }
-        else {
-            next_token = Token::UNKNOWN;
-        }
-        break;
-
-    case ';':
-        add_char();
-        next_token = Token::SEMICOLON;
-        break;
-
-    default:
-        add_char();
-        next_token = Token::END;
-        break;
-    }
-}
 
 void lexer::get_char() {
     if (inputs.empty()) {
@@ -129,5 +72,37 @@ void lexer::get_char() {
         else {
             char_class = CharClass::UNKNOWN;
         }
+    }
+}
+
+void lexer::lookup(char ch) {
+    static const std::map<char, Token> lookup_table = {
+        { '+', Token::ADD_OP },
+        { '-', Token::SUB_OP },
+        { '*', Token::MULT_OP },
+        { '/', Token::DIV_OP },
+        { '(', Token::LEFT_PAREN },
+        { ')', Token::RIGHT_PAREN },
+        { ';', Token::SEMICOLON },
+    };
+
+    if (lookup_table.contains(ch)) {
+        add_char();
+        next_token = lookup_table.at(ch);
+    }
+    else if (ch == ':') {
+        add_char();
+        get_char();
+
+        if (next_char == '=') {
+            add_char();
+            next_token = Token::ASSIGN_OP;
+        }
+        else
+            next_token = Token::UNKNOWN;
+    }
+    else {
+        add_char();
+        next_token = Token::END;
     }
 }

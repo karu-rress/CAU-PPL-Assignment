@@ -1,70 +1,44 @@
 /**
- * 
+ *
  * enums.cpp
- * 
+ *
  * This file contains the overloaded operators
  * for the enums used in the lexer and parser.
- * 
+ *
  */
 
+#include <array>
+#include <string_view>
 #include <utility>
 
 #include "../include/enums.h"
 
-std::ostream &operator<<(std::ostream &os, const CharClass &char_class) {
-    switch (char_class) {
-    case CharClass::LETTER:
-        os << "LETTER";
-        break;
-    case CharClass::DIGIT:
-        os << "DIGIT";
-        break;
-    case CharClass::UNKNOWN:
-        os << "UNKNOWN";
-        break;
-    case CharClass::END:
-        os << "END";
-        break;
-    [[unlikely]] default:
-        std::unreachable();
-    }
-    return os;
+std::ostream &operator<<(std::ostream &os, CharClass char_class) {
+    static constexpr std::array<std::string_view, 4> char_class_names = {
+        "LETTER",
+        "DIGIT",
+        "UNKNOWN",
+        "END",
+    };
+
+    return os << char_class_names[static_cast<int>(char_class)];
 }
 
 std::ostream &operator<<(std::ostream &os, const Token &token) {
-    switch (token) {
-    case Token::CONST:
-        os << "CONST";
-        break;
-    case Token::IDENT:
-        os << "IDENT";
-        break;
-    case Token::ASSIGN_OP:
-        os << "ASSIGN_OP";
-        break;
-    case Token::SEMICOLON:
-        os << "SEMICOLON";
-        break;
-    case Token::ADD_OP:
-        os << "ADD_OP";
-        break;
-    case Token::MULT_OP:
-        os << "MULT_OP";
-        break;
-    case Token::LEFT_PAREN:
-        os << "LEFT_PAREN";
-        break;
-    case Token::RIGHT_PAREN:
-        os << "RIGHT_PAREN";
-        break;
-    case Token::UNKNOWN:
-        os << "UNKNOWN";
-        break;
-    case Token::END:
-        os << "END";
-        break;
-    [[unlikely]] default:
-        std::unreachable();
-    }
-    return os;
+    static constexpr std::array<std::string_view, 12> token_names = {
+        "CONST",
+        "IDENT",
+        "ASSIGN_OP",
+        "SEMICOLON",
+        "ADD_OP",
+        "SUB_OP",
+        "MULT_OP",
+        "DIV_OP",
+        "LEFT_PAREN",
+        "RIGHT_PAREN",
+        "UNKNOWN",
+        "END",
+    };
+
+    return os << token_names[static_cast<int>(token)];
 }

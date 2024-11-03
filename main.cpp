@@ -14,5 +14,7 @@ int main(int argc, char *argv[]) {
     parser parser(argv[1]);
     parser.parse();
 
+    cin.get();
+
     return 0;
 }

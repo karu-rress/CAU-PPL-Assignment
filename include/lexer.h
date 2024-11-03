@@ -44,15 +44,15 @@ private:
         token_string += next_char;
     }
 
+    void get_char();
+
     inline void get_non_blank() {
-        while (isspace(next_char)) {
+        while (next_char <= 32 && next_char != '\0') {
             get_char();
         }
     }
 
     void lookup(char ch);
-
-    void get_char();
 };
 
 #endif

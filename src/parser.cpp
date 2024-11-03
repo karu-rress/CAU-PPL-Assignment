@@ -1,3 +1,11 @@
+/**
+ *
+ * parser.cpp
+ *
+ * This file contains the implementation of the parser class.
+ *
+ */
+
 #include <fstream>
 #include <iostream>
 
@@ -5,6 +13,8 @@
 
 using namespace std;
 using data_t = double;
+
+////////////// PUBLIC //////////////
 
 parser::parser(const string &filename) {
     if (ifstream fin(filename); fin.is_open()) {
@@ -37,12 +47,16 @@ void parser::parse() {
             cout << "Unknown";
         cout << "; ";
     }
+    cout << endl;
 }
 
-/////////////// PRIVATE //////////////
+////////////// PRIVATE //////////////
 
 // <statements> → <statement> | <statement><semi_colon><statements>
 void parser::statements() {
+    if (lex.get_next_token() == Token::END)
+        return;
+
     statement();
 
     // Statement ends
@@ -159,7 +173,7 @@ optional<data_t> parser::factor() {
             return ret;
         }
         else {
-            error_message = "(ERROR) expected a right parenthesis";
+            error_message = "(ERROR) expected a ')'.'";
             return nullopt;
         }
     }
@@ -176,12 +190,13 @@ optional<data_t> parser::factor() {
     else {
         if (token == Token::ADD_OP || token == Token::SUB_OP
             || token == Token::MULT_OP || token == Token::DIV_OP) {
-            error_message = "(WARNING) Ignoring extra operator";
+            error_message = "(WARNING) Ignoring extra operator '" + lex.get_token_string() + "'.";
+
             take_next_token();
-            return nullopt;
+            return factor();
         }
         else {
-            error_message = "(ERROR) expected a ')', an identifier, or a constant";
+            error_message = "(ERROR) expected a '(', an identifier, or a constant";
             return nullopt;
         }
     }
@@ -200,7 +215,7 @@ string parser::ident(bool add) {
             symbol_table[id] = 0.0;
         }
         else {
-            error_message = "(Error) 정의되지 않은 변수(" + id + ")가 참조됨";
+            error_message = "(Error) Undefined identifier: '" + id + "'.";
             symbol_table[id] = nullopt;
         }
     }
