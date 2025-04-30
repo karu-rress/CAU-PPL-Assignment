@@ -32,6 +32,6 @@
   </tr>
   <tr>
     <td><b>이수학기</b></td><td>2-2</td>
-    <td><b>취득평점</b></td><td>-</td>
+    <td><b>취득평점</b></td><td>A+(4.5)</td>
   </tr>
 </table>
